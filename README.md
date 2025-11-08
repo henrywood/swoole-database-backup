@@ -4,7 +4,7 @@ Takes database backup after certain interval
 
 ## Installation
 
-```composer require ahmard/database-backup```
+```composer require henrywood/swoole-database-backup```
 
 ## Usage
 
