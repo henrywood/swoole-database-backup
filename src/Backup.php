@@ -46,6 +46,34 @@ class Backup
      * @param array<int, class-string<AbstractBackup>> $backupClasses
      * @return void
      */
+    public function startPeriodic(array $backupClasses): void
+    {
+        foreach ($backupClasses as $backupClass) {
+            /** @var AbstractBackup $backup */
+            $backup = new $backupClass;
+
+            Timer::tick($backup->interval(), function () use ($backup) {
+                $backup->onBefore($backup->getBackupFilePath());
+
+                Coroutine::run(function () use ($backup) {
+                    try {
+                        $this->backupService->takeBackup(
+                            backup: $backup,
+                            smtpCredential: $this->smtpCredential,
+                            mailReceivers: $this->mailReceivers,
+                        );
+                    } catch (Throwable $exception) {
+                        $backup->onError($exception);
+                    }
+                });
+            });
+        }
+    }
+
+    /**
+     * @param array<int, class-string<AbstractBackup>> $backupClasses
+     * @return void
+     */
     public function start(array $backupClasses): void
     {
         foreach ($backupClasses as $backupClass) {
