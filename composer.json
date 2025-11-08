@@ -1,7 +1,7 @@
 {
 	"name": "henrywood/swoole-database-backup",
 	"description": "Handles database backup",
-	"type": "project",
+	"type": "library",
 	"license": "MIT",
 	"authors": [
 		{
