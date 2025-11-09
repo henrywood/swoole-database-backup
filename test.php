@@ -13,7 +13,7 @@ use Swoole\Http\Server; // Import Server class
 // Define the path to your SQLite database file.
 // IMPORTANT: This should be an absolute path for reliability.
 const DB_FILE = __DIR__ . '/db.db'; 
-const DB_BACKUP_INTERVAL_SECS = 2;
+const DB_BACKUP_INTERVAL_SECS = 10;
 
 // --- Backup Class Definition ---
 // In a real application, this would be in DatabaseBackup\Backups\NucleusBackup.php
