@@ -2,7 +2,7 @@
 
 namespace DatabaseBackup;
 
-readonly class MailReceiver
+class MailReceiver
 {
     public function __construct(
         public string $email,
