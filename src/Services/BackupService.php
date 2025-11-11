@@ -40,6 +40,7 @@ class BackupService
 			DatabaseDriver::MYSQL		=> $this->takeMysqlBackup($connection, $backup->getBackupFilePath()),
 				DatabaseDriver::POSTGRES	=> $this->takePostgresBackup($connection, $backup->getBackupFilePath()),
 				DatabaseDriver::SQLITE		=> $this->takeSqliteBackup($connection, $backup->getBackupFilePath()),
+				DatabaseDriver::LOG_FILE	=> $this->takeLogFileBackup($connection, $backup->getBackupFilePath()),
 			};
 
 			if ($backup->willSendMailOnSuccess()) {
@@ -85,6 +86,11 @@ class BackupService
 		}
 
 		return MailService::new($credential);
+	}
+
+	protected function takeLogFileBackup(string $srcLog, string $destLog): void {
+
+		copy($srcLog, $destLog);
 	}
 
 	protected function takeMysqlBackup(DatabaseConnection $connection, string $path): void
