@@ -34,13 +34,18 @@ class BackupService
 		$connection = $backup->connection();
 
 		try {
+
 			Console::comment(sprintf('running: %s', $backup::class));
+
+			if (is_string($connection) && file_exists($connection)) {
+				$this->takeLogFileBackup($connection, $backup->getBackupFilePath());
+				return;
+			}
 
 			match ($connection->driver) {
 			DatabaseDriver::MYSQL		=> $this->takeMysqlBackup($connection, $backup->getBackupFilePath()),
 				DatabaseDriver::POSTGRES	=> $this->takePostgresBackup($connection, $backup->getBackupFilePath()),
 				DatabaseDriver::SQLITE		=> $this->takeSqliteBackup($connection, $backup->getBackupFilePath()),
-				DatabaseDriver::LOG_FILE	=> $this->takeLogFileBackup($connection, $backup->getBackupFilePath()),
 			};
 
 			if ($backup->willSendMailOnSuccess()) {
