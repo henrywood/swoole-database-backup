@@ -49,10 +49,15 @@ class BackupService
 			};
 
 			if ($backup->willSendMailOnSuccess()) {
+
+				$s = ($backup->getSubjectDomain());
+				$d = ($s) ? ' ['.$s.'] ' : '';
+				$d2= ($s) ? ' - Domain: '.$s : '';
+
 				go(fn() => $this->makeMailService($smtpCredential, $backup->smtpCredential())
 					->setReceivers($mailReceivers)
-					->setSubject(sprintf('[%s] Backup Success', $backup::class))
-					->setBody('Backup taking succeeded')
+					->setSubject(sprintf('[%s] Backup Success %s', $backup::class, $d))
+					->setBody(sprintf('Backup taking succeeded %s', $d2))
 					->send());
 			}
 
@@ -63,12 +68,16 @@ class BackupService
 		} catch (Throwable $exception) {
 			Console::error('failure while taking backup');
 
+			$s = ($backup->getSubjectDomain());
+			$d = ($s) ? ' ['.$s.'] ' : '';
+			$d2= ($s) ? ' - Domain: '.$s : '';
+
 			if ($backup->willSendMailOnError()) {
-				go(function () use ($smtpCredential, $backup, $mailReceivers,) {
+				go(function () use ($smtpCredential, $backup, $mailReceivers, $d, $d2) {
 					$this->makeMailService($smtpCredential, $backup->smtpCredential())
 		  ->setReceivers($mailReceivers)
-		  ->setSubject(sprintf('[%s] Backup Failure', $backup::class))
-		  ->setBody(sprintf('Backup service "%s" failed', $backup::class))
+		  ->setSubject(sprintf('[%s] Backup Failure %s', $backup::class, $d))
+		  ->setBody(sprintf('Backup service "%s" failed %s', $backup::class, $d2))
 		  ->send();
 
 					$backup->onAfter($backup->getBackupFilePath());

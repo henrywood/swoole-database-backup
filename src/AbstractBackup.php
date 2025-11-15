@@ -10,7 +10,7 @@ abstract class AbstractBackup
 	protected bool $sendMailOnError = true;
 	protected bool $sendMailOnSuccess = false;
 	private string $backupFilePath;
-
+	private string $subjectDomain;
 
 	abstract public function connection(): string|DatabaseConnection;
 
@@ -20,6 +20,18 @@ abstract class AbstractBackup
 
 	abstract public function onSuccess(string $path, callable $done): void;
 
+	public function subjectDomain(): string {
+		return '';
+	}
+
+	public function getSubjectDomain(): string {
+
+		if (!isset($this->subjectDomain)) {
+			$this->subjectDomain = $this->subjectDomain();
+		}
+
+		return $this->subjectDomain;
+	}
 
 	public function onBefore(string $path): void
 	{
