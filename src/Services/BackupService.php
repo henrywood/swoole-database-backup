@@ -39,7 +39,7 @@ class BackupService
 
 			if (is_string($connection) && file_exists($connection)) {
 				$this->takeLogFileBackup($connection, $backup->getBackupFilePath());
-				return;
+				goto cont;
 			}
 
 			match ($connection->driver) {
@@ -48,6 +48,7 @@ class BackupService
 				DatabaseDriver::SQLITE		=> $this->takeSqliteBackup($connection, $backup->getBackupFilePath()),
 			};
 
+			cont:
 			if ($backup->willSendMailOnSuccess()) {
 				go(fn() => $this->makeMailService($smtpCredential, $backup->smtpCredential())
 					->setReceivers($mailReceivers)
