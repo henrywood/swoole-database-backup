@@ -55,7 +55,7 @@ class Backup
             Timer::tick($backup->interval(), function () use ($backup) {
                 $backup->onBefore($backup->getBackupFilePath());
 
-                Coroutine::run(function () use ($backup) {
+                go(function () use ($backup) {
                     try {
                         $this->backupService->takeBackup(
                             backup: $backup,
@@ -83,7 +83,7 @@ class Backup
             Timer::after($backup->interval(), function () use ($backup) {
                 $backup->onBefore($backup->getBackupFilePath());
 
-                Coroutine::run(function () use ($backup) {
+                go(function () use ($backup) {
                     try {
                         $this->backupService->takeBackup(
                             backup: $backup,
