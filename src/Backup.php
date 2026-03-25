@@ -44,18 +44,15 @@ class Backup
 
     /**
      * @param array<int, class-string<AbstractBackup>> $backupClasses
-     * @return void
+     * @return array timers array
      */
-    public function startPeriodic(array $backupClasses): void
-    {
+    public function startPeriodic(array $backupClasses): array {
+        $timerIds = [];
         foreach ($backupClasses as $backupClass) {
-            /** @var AbstractBackup $backup */
             $backup = new $backupClass;
-
-            Timer::tick($backup->interval(), function () use ($backup) {
+            $timerIds[] = Timer::tick($backup->interval(), function() use ($backup) {
                 $backup->onBefore($backup->getBackupFilePath());
-
-                go(function () use ($backup) {
+                go(function() use ($backup) {
                     try {
                         $this->backupService->takeBackup(
                             backup: $backup,
@@ -68,6 +65,7 @@ class Backup
                 });
             });
         }
+        return $timerIds;
     }
 
     /**
